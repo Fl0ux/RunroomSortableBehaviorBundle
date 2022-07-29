@@ -42,23 +42,41 @@ abstract class AbstractPositionHandler implements PositionHandlerInterface
 
     public function getPosition(object $entity, string $movePosition, int $lastPosition): int
     {
-        $newPosition = $this->getCurrentPosition($entity);
+        $currentPosition = $this->getCurrentPosition($entity);
+        $newPosition = 0;
 
         switch ($movePosition) {
-            case 'up':
-                --$newPosition;
+            case 'up' :
+                if ($currentPosition > 0) {
+                    $newPosition = $currentPosition - 1;
+                }
                 break;
+
             case 'down':
-                ++$newPosition;
+                if ($currentPosition < $lastPosition) {
+                    $newPosition = $currentPosition + 1;
+                }
                 break;
+
             case 'top':
-                $newPosition = 0;
+                if ($currentPosition > 0) {
+                    $newPosition = 0;
+                }
                 break;
+
             case 'bottom':
-                $newPosition = $lastPosition;
+                if ($currentPosition < $lastPosition) {
+                    $newPosition = $lastPosition;
+                }
                 break;
+
+            default:
+                if (is_numeric($movePosition)) {
+                    $newPosition = (int) $movePosition;
+                }
+
         }
 
-        return max(0, min($newPosition, $lastPosition));
+        return $newPosition;
     }
 }
